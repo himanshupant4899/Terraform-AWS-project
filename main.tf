@@ -122,7 +122,7 @@ resource "aws_instance" "myapp-instance" {
     type = "ssh"
     host = self.public_ip
     user = "ec2-user"
-    private_key = var.private_key_location
+    private_key = file(var.private_key_location)
   }
 
 # copy file to remote
