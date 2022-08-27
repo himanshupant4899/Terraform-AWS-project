@@ -11,6 +11,7 @@ variable "avail_zone" {}
 variable "my_ip" {}
 variable "instance_type" {}
 variable "public_key_location" {}
+variable "private_key_location" {}
 
 resource "aws_vpc" "myapp-vpc"{
   cidr_block = var.vpc_cidr_block
@@ -115,7 +116,30 @@ resource "aws_instance" "myapp-instance" {
   associate_public_ip_address = true
   key_name = aws_key_pair.ssh-key.key_name
 
-  user_data = file("entry-script.sh")
+ # user_data = file("entry-script.sh")
+
+  connection {
+    type = "ssh"
+    host = self.public_ip
+    user = "ec2-user"
+    private_key = var.private_key_location
+  }
+
+# copy file to remote
+  provisioner "file" {
+    source = "entry-script.sh"
+    destination =  "/home/ec2-user/copied-ec2-entry-script.sh"
+  }
+
+# Execute the file(copied) on remote
+  provisioner "remote-exec" {
+    script = file("copied-ec2-entry-script.sh")
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} > IP.txt"
+  }
+
   tags = {
     Name = "${var.env_prefix}-server"
   }
