@@ -1,3 +1,11 @@
+terraform {
+  required_version = ">=0.12"
+  backend "s3" {
+    bucket = "terraform-myapp-bucket48"
+    key = "myapp/state.tfstate"
+    region = "ap-south-1"
+  }
+}
 
 # Provider is used to interact with the API of the platform you are working with.
 provider "aws" {
