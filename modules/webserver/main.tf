@@ -1,5 +1,6 @@
-resource "aws_default_security_group" "default-sg" {
+resource "aws_security_group" "myapp-sg" {
   vpc_id = var.vpc_id
+  name = "myapp-sg"
 
   ingress {
     from_port = 22
@@ -51,7 +52,7 @@ resource "aws_instance" "myapp-instance" {
   ami = data.aws_ami.latest-amz-linux-image.id
   instance_type = var.instance_type
   subnet_id = var.my_app_subnet_id
-  security_groups = [aws_default_security_group.default-sg.id]
+  security_groups = [aws_security_group.myapp-sg.id]
   availability_zone = var.avail_zone
   associate_public_ip_address = true
   key_name = aws_key_pair.ssh-key.key_name
